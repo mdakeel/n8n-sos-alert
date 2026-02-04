@@ -1,0 +1,638 @@
+{
+  "name": "n8n-sos-alert",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -720,
+        96
+      ],
+      "id": "699bc012-904d-4dca-ac08-c4f816299d76",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "irgKg7tLMsLVQahn",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "contextWindowLength": 6
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -560,
+        128
+      ],
+      "id": "d6f49e6e-6025-48a1-9af1-ee09f281094f",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -544,
+        -192
+      ],
+      "id": "e6386cc8-e9f5-47f5-94e2-205109013965",
+      "name": "Telegram Trigger",
+      "webhookId": "ca68ae48-6136-4f6e-bee4-0b857397b00b",
+      "credentials": {
+        "telegramApi": {
+          "id": "6MIaGgC9aKb0I31L",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "37cfde59-3de7-4aa5-ba12-9daef3b46e16",
+              "leftValue": "={{ $json.message.text }}",
+              "rightValue": "start",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "9e1159a0-f69f-43f0-93a7-a09d08fef860",
+              "leftValue": "={{ $json.message.text }}",
+              "rightValue": "stop",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -176,
+        -192
+      ],
+      "id": "3f0ee8ca-2a47-4dec-8f8d-3487701c1e83",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 2
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        416,
+        -176
+      ],
+      "id": "e5796fd9-ade0-4beb-9d5b-5464c67ab921",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "operation": "sendLocation",
+        "chatId": "={{ $('Get row(s)').item.json.chatId }}",
+        "latitude": "={{ $json.lat }}",
+        "longitude": "={{ $json.lon }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1136,
+        -256
+      ],
+      "id": "63354035-4f5a-4b97-9c71-83f70b200745",
+      "name": "Send a location1",
+      "webhookId": "50f12b85-36ed-4b8d-99ad-613d99f0bf90",
+      "credentials": {
+        "telegramApi": {
+          "id": "PYq1TEqlhJEYJVUH",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4d8be5e0-8267-4257-a1d3-831f1321f862",
+              "name": "locationActive",
+              "value": true,
+              "type": "boolean"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        80,
+        -240
+      ],
+      "id": "ce7dd9da-ea4b-4ab0-9a77-7db071d62acb",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ac879a92-c898-4f16-8313-79266dddd9f9",
+              "name": "locationActive",
+              "value": false,
+              "type": "boolean"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        32,
+        -96
+      ],
+      "id": "b254ccb1-4346-41f7-a330-891ceb395e4f",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "6d13c994-5462-4009-890a-5ac1b982d9bf",
+              "leftValue": "={{ $json.locationActive }}",
+              "rightValue": "=true",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        720,
+        -224
+      ],
+      "id": "de02ec65-2c8b-44ef-9171-a5a690280c9b",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "url": "http://ip-api.com/json/",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        944,
+        -352
+      ],
+      "id": "e62c5fef-7ffc-4d19-87d0-fcec827943ef",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "dataTableId": {
+          "__rl": true,
+          "value": "pcbyezt0dULGgbWu",
+          "mode": "list",
+          "cachedResultName": "LocationControl",
+          "cachedResultUrl": "/projects/p7u5rOlnoNjNYOtL/datatables/pcbyezt0dULGgbWu"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "locationActive": "={{ $json.locationActive }}",
+            "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}"
+          },
+          "matchingColumns": [
+            "status"
+          ],
+          "schema": [
+            {
+              "id": "locationActive",
+              "displayName": "locationActive",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "chatId",
+              "displayName": "chatId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        288,
+        -288
+      ],
+      "id": "20efbda3-2559-4d4a-ae07-91070fa57667",
+      "name": "Insert row"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "pcbyezt0dULGgbWu",
+          "mode": "list",
+          "cachedResultName": "LocationControl",
+          "cachedResultUrl": "/projects/p7u5rOlnoNjNYOtL/datatables/pcbyezt0dULGgbWu"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "locationActive",
+              "condition": "isNotEmpty"
+            },
+            {
+              "keyName": "chatId",
+              "condition": "isNotEmpty"
+            }
+          ]
+        },
+        "limit": 1,
+        "orderBy": true
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        560,
+        -208
+      ],
+      "id": "0774346e-b46d-4acf-8579-394f9bec6869",
+      "name": "Get row(s)"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "86179db1-7144-46a4-a7fa-58a035e7b100",
+              "leftValue": "={{ $json.message.text }}",
+              "rightValue": "sos",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -384,
+        -256
+      ],
+      "id": "33b1db6a-f44e-4422-8642-d6ee2ee120a3",
+      "name": "If2"
+    },
+    {
+      "parameters": {
+        "amount": 1,
+        "unit": "minutes"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -176,
+        -352
+      ],
+      "id": "77a62a15-49d9-49b8-bba6-2985354559a7",
+      "name": "Wait",
+      "webhookId": "527085b9-d4e8-4e5d-aaa6-99e48de14762"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "=🚨 *SOS Alert* 🚨  \nThis is serious. Please click the link below to track me:  \nhttps://maps.google.com/?q={{ $json.lat }},{{ $json.lon }}  \n_Sent at: {{ $now }}_\n\n",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        192,
+        -464
+      ],
+      "id": "77390bf4-317e-4bf1-b5cb-3e60f240a64b",
+      "name": "Send a text message",
+      "webhookId": "02c4ff4a-0c78-4cdd-873a-384e39391593",
+      "credentials": {
+        "telegramApi": {
+          "id": "MCMadTTBDcC41wmX",
+          "name": "Telegram account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "http://ip-api.com/json/",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -16,
+        -400
+      ],
+      "id": "e9876e4e-6e83-4f5f-91da-db765459ff15",
+      "name": "HTTP Request1"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        400,
+        -528
+      ],
+      "id": "29a2a437-aa77-4a52-a569-e97b01a1dc18",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "name": "Replace Me",
+      "typeVersion": 1,
+      "position": [
+        640,
+        -576
+      ],
+      "id": "409d5662-8603-40ac-9483-0bf15c5744a0"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        []
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        []
+      ]
+    },
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "If2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get row(s)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Insert row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Send a location1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Insert row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s)": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If2": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a text message": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Replace Me",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Replace Me": {
+      "main": [
+        [
+          {
+            "node": "If2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "dd4d342b-6b67-44f7-9cb9-f2c4944e5a42",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "034f6260c654a9679bde0ed8b23afae4cf221856c881eef94cf78bb6ab11c744"
+  },
+  "id": "QGhyUo6r177MHqp_VGz_m",
+  "tags": []
+}
