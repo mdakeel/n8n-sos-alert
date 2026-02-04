@@ -3,40 +3,6 @@
   "nodes": [
     {
       "parameters": {
-        "options": {}
-      },
-      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
-      "typeVersion": 1,
-      "position": [
-        -720,
-        96
-      ],
-      "id": "699bc012-904d-4dca-ac08-c4f816299d76",
-      "name": "Google Gemini Chat Model",
-      "credentials": {
-        "googlePalmApi": {
-          "id": "irgKg7tLMsLVQahn",
-          "name": "Google Gemini(PaLM) Api account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "sessionIdType": "customKey",
-        "sessionKey": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
-        "contextWindowLength": 6
-      },
-      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
-      "typeVersion": 1.3,
-      "position": [
-        -560,
-        128
-      ],
-      "id": "d6f49e6e-6025-48a1-9af1-ee09f281094f",
-      "name": "Simple Memory"
-    },
-    {
-      "parameters": {
         "updates": [
           "message"
         ],
@@ -441,16 +407,6 @@
   ],
   "pinData": {},
   "connections": {
-    "Google Gemini Chat Model": {
-      "ai_languageModel": [
-        []
-      ]
-    },
-    "Simple Memory": {
-      "ai_memory": [
-        []
-      ]
-    },
     "Telegram Trigger": {
       "main": [
         [
@@ -628,7 +584,7 @@
     "binaryMode": "separate",
     "availableInMCP": false
   },
-  "versionId": "dd4d342b-6b67-44f7-9cb9-f2c4944e5a42",
+  "versionId": "0b0e9ca2-2f57-4157-9e93-52eba4f41872",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "034f6260c654a9679bde0ed8b23afae4cf221856c881eef94cf78bb6ab11c744"
