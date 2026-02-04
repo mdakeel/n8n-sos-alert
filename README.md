@@ -1,7 +1,8 @@
 ---
 
+![alt text](image.png)
 
-```markdown
+```
 # 🚨 n8n SOS Alert Workflow
 
 This repository documents the deployment of **n8n** on Render and the custom workflow built for Telegram‑based SOS alerts, HTTP requests, and scheduled triggers.
@@ -47,9 +48,9 @@ Set the following in Render → Service → Environment:
 
 ```
 N8N_BASIC_AUTH_ACTIVE=true
-N8N_BASIC_AUTH_USER=aakiltayyab
-N8N_BASIC_AUTH_PASSWORD=Aakil@8810
-N8N_ENCRYPTION_KEY=aakiltayyab8810449027aakiltayyab
+N8N_BASIC_AUTH_USER= add user name
+N8N_BASIC_AUTH_PASSWORD=add password
+N8N_ENCRYPTION_KEY=add you key
 ```
 
 ### 4. Access Service
